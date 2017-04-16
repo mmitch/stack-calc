@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use feature qw(say);
+
+my $current_stack;
+
+sub push_stack
+{
+    push @{$current_stack}, shift;
+}
+
+sub pop_stack
+{
+    die "stack exhausted\n" unless @{$current_stack};
+    return pop @{$current_stack};
+}
+
+sub execute
+{
+    my $tokens = shift;
+    
+    my $stack;
+    foreach my $token (split /\s+/, $tokens) {
+	push_stack $token;
+    }
+    return pop_stack;
+}
+
+sub repl
+{
+    while (my $line = <>) {
+	say execute($line);
+    }
+}
+
+# only start repl if started as a script
+repl() unless defined caller() and caller ne 'PAR';
