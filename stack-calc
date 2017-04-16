@@ -7,9 +7,14 @@ use IO::File;
 
 my $current_stack;
 
+sub stack_length
+{
+    return @{$current_stack};
+}
+
 sub stack_empty
 {
-    return ! @{$current_stack};
+    return stack_length == 0;
 }
 
 sub push_stack
