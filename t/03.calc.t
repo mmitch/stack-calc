@@ -1,5 +1,5 @@
 #!perl
-use Test::More tests => 5;
+use Test::More tests => 6;
 use warnings;
 use strict;
 
@@ -19,4 +19,9 @@ subtest 'multiplication' => sub {
 
 subtest 'division' => sub {
     is( execute('2 3 /'),  '1.5' );
+};
+
+subtest 'combination' => sub {
+    is( execute('4 2 3 / *'),      '6', '(3 / 2) * 4' );
+    is( execute('1 2 5 - / 3 +'),  '6', '(5 - 2) / 1 + 3' );
 };
