@@ -45,6 +45,17 @@ sub pop_stack
     return pop @{$current_stack};
 }
 
+sub push_stack_stack
+{
+    push @stack_stack, $current_stack;
+}
+
+sub pop_stack_stack
+{
+    die "stack exhausted\n" unless @stack_stack;
+    $current_stack = pop @stack_stack;
+}
+
 sub do_repeat
 {
     my $repeat_op = shift;
@@ -64,12 +75,12 @@ $ops = {
     '!/' => sub { do_repeat('/') },    # repeated division
 
     '('  => sub {                      # start substack
-	push @stack_stack, $current_stack;
+	push_stack_stack;
 	init_stack;
     },
     ')'  => sub {                      # end substack, return top element
 	my $ret = pop_stack;
-	$current_stack = pop @stack_stack;
+	pop_stack_stack;
 	push_stack $ret;
     },
 };
