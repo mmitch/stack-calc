@@ -45,13 +45,6 @@ sub pop_stack
     return pop @{$current_stack};
 }
 
-sub dump_stack
-{
-    my (@optargs) = (@_);
-    unshift @optargs, '->' if @optargs;
-    warn join(', ', (@{$current_stack}, @optargs)) . "\n" if defined $current_stack;
-}
-
 sub do_repeat
 {
     my $repeat_op = shift;
