@@ -1,6 +1,10 @@
 stack-calc
 ==========
 
+[![Build Status](https://travis-ci.org/mmitch/stack-calc.svg?branch=master)](https://travis-ci.org/mmitch/stack-calc)
+[![Coverage Status](https://codecov.io/github/mmitch/stack-calc/coverage.svg?branch=master)](https://codecov.io/github/mmitch/stack-calc?branch=master)
+[![GPL 2+](https://img.shields.io/badge/license-GPL%202%2B-blue.svg)](http://www.gnu.org/licenses/gpl-2.0-standalone.html)
+
 simple stack calculation engine without any deeper meaning
 
 This is just a coding exercise.
