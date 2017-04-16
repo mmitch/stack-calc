@@ -58,7 +58,7 @@ sub repl
 {
     my $fh = shift;
     
-    say execute $_ foreach <$fh>;
+    say execute $_ while ( defined( $_ = $fh->getline) );
 }
 
 # only start repl if started as a script
