@@ -52,7 +52,7 @@ sub push_stack_stack
 
 sub pop_stack_stack
 {
-    die "stack exhausted\n" unless @stack_stack;
+    die "stack_stack exhausted\n" unless @stack_stack;
     $current_stack = pop @stack_stack;
 }
 
