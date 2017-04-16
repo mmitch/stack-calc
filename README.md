@@ -67,3 +67,10 @@ examples
 --------
 
 see tests (`t/*.t`)
+
+
+copyright
+---------
+
+Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>  
+Licensed under GNU GPL v2 or later.
