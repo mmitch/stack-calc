@@ -6,6 +6,12 @@ use feature qw(say);
 use IO::File;
 
 my $current_stack;
+my $ops;
+
+sub init_stack
+{
+    $current_stack = [];
+}
 
 sub stack_length
 {
@@ -28,16 +34,37 @@ sub pop_stack
     return pop @{$current_stack};
 }
 
-my $ops = {
-    '+' => sub { pop_stack() + pop_stack() },
-    '-' => sub { pop_stack() - pop_stack() },
-    '*' => sub { pop_stack() * pop_stack() },
-    '/' => sub { pop_stack() / pop_stack() },
+sub dump_stack
+{
+    my (@optargs) = (@_);
+    unshift @optargs, '->' if @optargs;
+    warn join(', ', (@{$current_stack}, @optargs)) . "\n" if defined $current_stack;
+}
+
+sub do_repeat
+{
+    my $repeat_op = shift;
+
+    process_token( $repeat_op ) while stack_length > 1;
+    return pop_stack;
+}
+
+$ops = {
+    '+'  => sub { pop_stack() + pop_stack() }, # addition
+    '-'  => sub { pop_stack() - pop_stack() }, # subtraction
+    '*'  => sub { pop_stack() * pop_stack() }, # multiplication
+    '/'  => sub { pop_stack() / pop_stack() }, # division
+    '!+' => sub { do_repeat('+') },            # repeated addition
+    '!-' => sub { do_repeat('-') },            # repeated subtraction
+    '!*' => sub { do_repeat('*') },            # repeated multiplication
+    '!/' => sub { do_repeat('/') },            # repeated division
 };
 
 sub process_token
 {
     my $token = shift;
+    #dump_stack( $token );
+
     if (exists $ops->{$token}) {
 	push_stack $ops->{$token}->();
     }
@@ -50,6 +77,7 @@ sub execute
 {
     my $tokens = shift;
 
+    init_stack;
     process_token $_ foreach split /\s+/, $tokens;
     return pop_stack;
 }
