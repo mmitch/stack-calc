@@ -47,9 +47,8 @@ sub execute
 sub repl
 {
     my $fh = shift;
-    while (my $line = <$fh>) {
-	say execute($line);
-    }
+    
+    say execute $_ foreach <$fh>;
 }
 
 # only start repl if started as a script
