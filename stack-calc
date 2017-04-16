@@ -56,6 +56,16 @@ sub pop_stack_stack
     $current_stack = pop @stack_stack;
 }
 
+sub do_op2
+{
+    my $op = shift;
+    my ($arg1, $arg2) = (pop_stack(), pop_stack());
+
+    my $result = $op->( $arg1, $arg2 );
+
+    push_stack( $result );
+}
+
 sub do_repeat
 {
     my $repeat_op = shift;
@@ -64,10 +74,10 @@ sub do_repeat
 }
 
 $ops = {
-    '+'  => sub { push_stack( pop_stack() + pop_stack() ) }, # addition
-    '-'  => sub { push_stack( pop_stack() - pop_stack() ) }, # subtraction
-    '*'  => sub { push_stack( pop_stack() * pop_stack() ) }, # multiplication
-    '/'  => sub { push_stack( pop_stack() / pop_stack() ) }, # division
+    '+'  => sub { do_op2( sub { $_[0] + $_[1] } ) }, # addition
+    '-'  => sub { do_op2( sub { $_[0] - $_[1] } ) }, # subtraction
+    '*'  => sub { do_op2( sub { $_[0] * $_[1] } ) }, # multiplication
+    '/'  => sub { do_op2( sub { $_[0] / $_[1] } ) }, # division
 
     '!+' => sub { do_repeat('+') },    # repeated addition
     '!-' => sub { do_repeat('-') },    # repeated subtraction
