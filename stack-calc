@@ -7,6 +7,11 @@ use IO::File;
 
 my $current_stack;
 
+sub stack_empty
+{
+    return ! @{$current_stack};
+}
+
 sub push_stack
 {
     push @{$current_stack}, shift;
@@ -14,7 +19,7 @@ sub push_stack
 
 sub pop_stack
 {
-    die "stack exhausted\n" unless @{$current_stack};
+    die "stack exhausted\n" if stack_empty;
     return pop @{$current_stack};
 }
 
