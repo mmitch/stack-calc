@@ -1,5 +1,5 @@
 #!perl
-use Test::More tests => 2;
+use Test::More tests => 3;
 use warnings;
 use strict;
 
@@ -12,4 +12,3 @@ subtest 'single value is returned' => sub {
 subtest 'last of multiple values is returned' => sub {
     is( execute('1 2 3'),  '3' );
 };
-

@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use feature qw(say);
 
+use IO::File;
+
 my $current_stack;
 
 sub push_stack
@@ -29,10 +31,11 @@ sub execute
 
 sub repl
 {
-    while (my $line = <>) {
+    my $fh = shift;
+    while (my $line = <$fh>) {
 	say execute($line);
     }
 }
 
 # only start repl if started as a script
-repl() unless defined caller() and caller ne 'PAR';
+repl( bless(\*STDIN => 'IO::File') ) unless defined caller() and caller ne 'PAR';
