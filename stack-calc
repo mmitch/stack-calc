@@ -18,14 +18,29 @@ sub pop_stack
     return pop @{$current_stack};
 }
 
+my $ops = {
+    '+' => sub { pop_stack() + pop_stack() },
+    '-' => sub { pop_stack() - pop_stack() },
+    '*' => sub { pop_stack() * pop_stack() },
+    '/' => sub { pop_stack() / pop_stack() },
+};
+
+sub process_token
+{
+    my $token = shift;
+    if (exists $ops->{$token}) {
+	push_stack $ops->{$token}->();
+    }
+    else {
+	push_stack $token;
+    }
+}
+
 sub execute
 {
     my $tokens = shift;
-    
-    my $stack;
-    foreach my $token (split /\s+/, $tokens) {
-	push_stack $token;
-    }
+
+    process_token $_ foreach split /\s+/, $tokens;
     return pop_stack;
 }
 
