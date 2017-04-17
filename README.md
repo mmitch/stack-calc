@@ -35,12 +35,23 @@ the second-to-top value and so on)
  - `!+` (`!-`, `!*`, `!/`) will repeatedly execute `+` (`-`, `*`, `/`)
    unless there is only one value left in the current stack
 
- - `(` will start an empty sub-stack
- - `)` will take the top value of the current stack, remove the
-   current stack, restore the previous stack and put the saved value
-   onto it
-
  - `seq` will generate an integer sequence from `1` to *T1*
+
+### groups
+
+ - `( … )` creates a normal (sub-)stack.  It is evaluated while it is
+   parsed and after parsing the whole stack is replaced by it's top
+   value.  This stack type is useful to set boundaries for a repeated
+   command (`!+` etc.).
+
+ - `[ … ]` creates a list.  It is evaluated while it is parsed, but
+   after that the list is retained.  An operation will be applied to
+   every list item and create a result list *in place*.  Operating on
+   two lists will create something like a *cross product* consisting
+   of nested lists.
+
+The implicit initial main stack is a normal stack (`( … )`): It is
+evaluated and it's top value is returned.
 
 
 REPL

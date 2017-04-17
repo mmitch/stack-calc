@@ -56,14 +56,42 @@ sub pop_stack_stack
     $current_stack = pop @stack_stack;
 }
 
+sub clone
+{
+    return [ @{ shift() } ];
+}
+
+sub inner_op2
+{
+    my ($op, $arg1, $arg2) = @_;
+
+    if (ref $arg1 eq 'ARRAY') {
+	$arg1 = clone $arg1;
+	foreach my $elem (@{$arg1}) {
+	    $elem = inner_op2( $op, $elem, $arg2 );
+	}
+	return $arg1;
+    }
+    elsif (ref $arg2 eq 'ARRAY') {
+	$arg2 = clone $arg2;
+	foreach my $elem (@{$arg2}) {
+	    $elem = inner_op2( $op, $arg1, $elem );
+	}
+	return $arg2;
+    }
+    else {
+	return $op->( $arg1, $arg2 );
+    }
+}
+
 sub do_op2
 {
     my $op = shift;
     my ($arg1, $arg2) = (pop_stack(), pop_stack());
 
-    my $result = $op->( $arg1, $arg2 );
+    my $result = inner_op2 $op, $arg1, $arg2;
 
-    push_stack( $result );
+    push_stack $result ;
 }
 
 sub do_repeat
@@ -94,6 +122,16 @@ $ops = {
 	push_stack $ret;
     },
 
+    '['  => sub {                      # start list
+	push_stack_stack;
+	init_stack;
+    },
+    ']'  => sub {                      # end list, push list to stack
+	my $list = $current_stack;
+	pop_stack_stack;
+	push_stack $list;
+    },
+
     'seq' => sub {                     # generate sequence
 	my $max = pop_stack;
 	push_stack $_ for 1 .. $max;
@@ -112,13 +150,26 @@ sub process_token
     }
 }
 
+sub for_print
+{
+    my $token = shift;
+
+    if (ref $token eq 'ARRAY') {
+	return join ' ', ('[', map { for_print($_) }  @{$token}, ']');
+    }
+    else
+    {
+	return $token;
+    }
+}
+
 sub execute
 {
     my $tokens = shift;
 
     init_stacks;
     process_token $_ foreach split /\s+/, $tokens;
-    return pop_stack;
+    return for_print pop_stack;
 }
 
 sub repl
