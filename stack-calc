@@ -5,17 +5,22 @@ use warnings;
 # Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v2 or later.
 
-use feature qw(say);
+use v5.10;
 
+use Clone qw(clone);
 use IO::File;
 
-my @stack_stack;
-my $current_stack;
-my $ops;
+my ($current_stack, @stack_stack);
+my ($ops, $groups);
 
 sub init_stack
 {
-    $current_stack = [];
+    my $type = shift // 'STACK';
+    
+    $current_stack = {
+	TYPE  => $type,
+	STACK => [],
+    }
 }
 
 sub init_stacks
@@ -26,7 +31,12 @@ sub init_stacks
 
 sub stack_length
 {
-    return @{$current_stack};
+    return @{$current_stack->{STACK}};
+}
+
+sub stack_exec
+{
+    return $current_stack->{TYPE} ne 'BLOCK';
 }
 
 sub stack_empty
@@ -36,13 +46,13 @@ sub stack_empty
 
 sub push_stack
 {
-    push @{$current_stack}, shift;
+    push @{$current_stack->{STACK}}, shift;
 }
 
 sub pop_stack
 {
     die "stack exhausted\n" if stack_empty;
-    return pop @{$current_stack};
+    return pop @{$current_stack->{STACK}};
 }
 
 sub push_stack_stack
@@ -56,25 +66,20 @@ sub pop_stack_stack
     $current_stack = pop @stack_stack;
 }
 
-sub clone
-{
-    return [ @{ shift() } ];
-}
-
 sub inner_op2
 {
     my ($op, $arg1, $arg2) = @_;
 
-    if (ref $arg1 eq 'ARRAY') {
+    if (ref $arg1 eq 'HASH') {
 	$arg1 = clone $arg1;
-	foreach my $elem (@{$arg1}) {
+	foreach my $elem (@{$arg1->{STACK}}) {
 	    $elem = inner_op2( $op, $elem, $arg2 );
 	}
 	return $arg1;
     }
-    elsif (ref $arg2 eq 'ARRAY') {
+    elsif (ref $arg2 eq 'HASH') {
 	$arg2 = clone $arg2;
-	foreach my $elem (@{$arg2}) {
+	foreach my $elem (@{$arg2->{STACK}}) {
 	    $elem = inner_op2( $op, $arg1, $elem );
 	}
 	return $arg2;
@@ -111,7 +116,14 @@ $ops = {
     '!-' => sub { do_repeat('-') },    # repeated subtraction
     '!*' => sub { do_repeat('*') },    # repeated multiplication
     '!/' => sub { do_repeat('/') },    # repeated division
+    
+    'seq' => sub {                     # generate sequence
+	my $max = pop_stack;
+	push_stack $_ for 1 .. $max;
+    },
+};
 
+$groups = {
     '('  => sub {                      # start substack
 	push_stack_stack;
 	init_stack;
@@ -124,7 +136,7 @@ $ops = {
 
     '['  => sub {                      # start list
 	push_stack_stack;
-	init_stack;
+	init_stack 'LIST';
     },
     ']'  => sub {                      # end list, push list to stack
 	my $list = $current_stack;
@@ -132,9 +144,14 @@ $ops = {
 	push_stack $list;
     },
 
-    'seq' => sub {                     # generate sequence
-	my $max = pop_stack;
-	push_stack $_ for 1 .. $max;
+    '{'  => sub {                      # start block
+	push_stack_stack;
+	init_stack 'BLOCK';
+    },
+    '}'  => sub {                      # end block, push block to stack
+	my $block = $current_stack;
+	pop_stack_stack;
+	push_stack $block;
     },
 };
 
@@ -142,20 +159,32 @@ sub process_token
 {
     my $token = shift;
 
-    if (exists $ops->{$token}) {
-	$ops->{$token}->();
+    if (exists $groups->{$token}) {
+	$groups->{$token}->();
+	return;
     }
-    else {
-	push_stack $token;
+
+    if (stack_exec) {
+	if (exists $ops->{$token}) {
+	    $ops->{$token}->();
+	    return;
+	}
     }
+    
+    push_stack $token;
 }
 
 sub for_print
 {
     my $token = shift;
 
-    if (ref $token eq 'ARRAY') {
-	return join ' ', ('[', map { for_print($_) }  @{$token}, ']');
+    if (ref $token eq 'HASH') {
+	if ($token->{TYPE} eq 'LIST') {
+	    return join ' ', ('[', map { for_print($_) } @{$token->{STACK}}, ']');
+	}
+	else {
+	    return join ' ', (map { for_print($_) } @{$token->{STACK}});
+	}
     }
     else
     {

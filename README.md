@@ -50,6 +50,11 @@ the second-to-top value and so on)
    two lists will create something like a *cross product* consisting
    of nested lists.
 
+ - `{ … }` creates a block.  In a block, operations are not evaluated
+   during parsing - only groups are.  Subgroups will be evaluated
+   normally.  This will be used to create named functions, but this is
+   /not yet implemented/.
+
 The implicit initial main stack is a normal stack (`( … )`): It is
 evaluated and it's top value is returned.
 
