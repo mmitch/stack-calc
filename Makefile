@@ -7,7 +7,7 @@ test:
 cover:
 	cover -test -ignore '\.t$$'
 
-report: coverage
+report: cover
 	sensible-browser cover_db/coverage.html
 
 clean:
