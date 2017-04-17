@@ -17,7 +17,7 @@ clean:
 	rm -fr cover_db/
 
 $(DEPS): $(SOURCES)
-	grep ^use $(SOURCES) | awk '{print $$2}' | sed 's/;$$//' | egrep -v '^(strict|warnings)$$' | sort | uniq > $@
+	grep ^use $(SOURCES) | awk '{print $$2}' | sed 's/;$$//' | egrep -v '^(strict|warnings)$$' | grep [A-Z] | sort | uniq > $@
 
 showdeps: $(DEPS)
 	cat $(DEPS)
