@@ -4,7 +4,7 @@ SOURCES	:= stack-calc $(wildcard t/*.t)
 test:
 	cd t; prove .
 
-coverage:
+cover:
 	cover -test -ignore '\.t$$'
 
 report: coverage
