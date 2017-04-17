@@ -19,10 +19,11 @@ can do simple calculations with the values on the stack.
 ### tokens
 
 A command is split into tokens separated by whitespace.  Any token
-that is not a special command will be put on the stack.  These tokens
-should only be numeric values or everything will break.
+that is not an operation or a group delimiter will be put on the
+stack.  These tokens should only be numeric values or everything will
+break.
 
-### commands
+### operations
 
 (notation: *T1* is the value at the top of the current stack, *T2* is
 the second-to-top value and so on)
