@@ -93,6 +93,11 @@ $ops = {
 	pop_stack_stack;
 	push_stack $ret;
     },
+
+    'seq' => sub {                     # generate sequence
+	my $max = pop_stack;
+	push_stack $_ for 1 .. $max;
+    },
 };
 
 sub process_token

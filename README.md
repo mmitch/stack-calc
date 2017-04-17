@@ -40,6 +40,8 @@ the second-to-top value and so on)
    current stack, restore the previous stack and put the saved value
    onto it
 
+ - `seq` will generate an integer sequence from `1` to *T1*
+
 
 REPL
 ----
