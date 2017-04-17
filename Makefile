@@ -5,7 +5,7 @@ test:
 	cd t; prove .
 
 coverage:
-	cover -test
+	cover -test -ignore '\.t$$'
 
 report: coverage
 	sensible-browser cover_db/coverage.html
