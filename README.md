@@ -41,7 +41,7 @@ the second-to-top value and so on)
 ### groups
 
  - `( … )` creates a normal (sub-)stack.  It is evaluated while it is
-   parsed and after parsing the whole stack is replaced by it's top
+   parsed and after parsing the whole stack is replaced by its top
    value.  This stack type is useful to set boundaries for a repeated
    command (`!+` etc.).
 
@@ -57,7 +57,7 @@ the second-to-top value and so on)
    /not yet implemented/.
 
 The implicit initial main stack is a normal stack (`( … )`): It is
-evaluated and it's top value is returned.
+evaluated and its top value is returned.
 
 
 REPL
