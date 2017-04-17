@@ -103,7 +103,6 @@ $ops = {
 sub process_token
 {
     my $token = shift;
-    #dump_stack( $token );
 
     if (exists $ops->{$token}) {
 	$ops->{$token}->();
