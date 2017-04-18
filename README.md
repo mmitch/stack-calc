@@ -63,6 +63,19 @@ The implicit initial main stack is a normal stack (`( … )`): It is
 evaluated and its top value is returned.
 
 
+examples
+--------
+
+ - `1 2 +` adds 2 to 1
+ - `2 5 /` divides 5 by 2
+ - `5 seq !+` adds up all integers from 1 to 5
+ - `( 9 seq !+ ) ( 15 seq !+ ) -` adds up all integers from 10 to 15
+ - `15 seq 9 d !+` does the same.  Both variants are very inefficient
+   for big numbers.
+ - `6 seq !*` calculates !6
+ - `[ 10 20 30 ] 2 *` doubles every value in the list
+
+
 REPL
 ----
 
@@ -87,12 +100,6 @@ installation, compiling, tests etc.
 -----------------------------------
 
 see `Makefile`
-
-
-examples
---------
-
-see tests (`t/*.t`)
 
 
 copyright
