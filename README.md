@@ -83,7 +83,7 @@ defined function, the following happens:
 examples
 --------
 
- - `1 2 +` adds 2 to 1
+ - `1 2 +` adds 1 to 2
  - `2 5 /` divides 5 by 2
  - `5 seq !+` adds up all integers from 1 to 5
  - `( 9 seq !+ ) ( 15 seq !+ ) -` adds up all integers from 10 to 15
