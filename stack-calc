@@ -79,6 +79,28 @@ sub pop_stack_stack
     $current_stack = pop @stack_stack;
 }
 
+sub inner_seq
+{
+    my $arg = shift;
+
+    if (ref $arg eq 'HASH') {
+	foreach my $elem (@{$arg->{STACK}}) {
+	    push_stack_stack;
+	    init_stack 'LIST';
+
+	    inner_seq( $elem );
+
+	    my $list = $current_stack;
+	    pop_stack_stack;
+	    $elem = $list;
+	}
+	push_stack $arg;
+    }
+    else {
+	push_stack $_ for 1 .. $arg;
+    }
+}
+
 sub inner_op2
 {
     my ($op, $arg1, $arg2) = @_;
@@ -162,8 +184,7 @@ $ops = {
     },
 
     'seq' => sub {                     # generate sequence
-	my $max = pop_stack;
-	push_stack $_ for 1 .. $max;
+	inner_seq pop_stack;
     },
 
     'defun' => sub {                   # define function (name, arg count, block)
