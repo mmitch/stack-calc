@@ -96,10 +96,15 @@ This is currently not very useful as `stack-calc` pollutes the
 possible.
 
 
-installation, compiling, tests etc.
------------------------------------
+installation
+------------
 
-see `Makefile`
+To install all dependencies via `cpanm` run `make installdeps`.  If
+you use another installation method, run `make -s showdeps` to show what
+is needed.
+
+The `stack-calc` script currently is self-sufficient when all
+dependencies are installed, just put it where you want it to be.
 
 
 copyright
