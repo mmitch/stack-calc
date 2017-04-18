@@ -11,7 +11,7 @@ use Clone qw(clone);
 use IO::File;
 
 my ($current_stack, @stack_stack);
-my ($ops, $groups);
+my ($ops, $groups, $funcs);
 
 sub init_stack
 {
@@ -119,6 +119,22 @@ sub do_repeat
     process_token( $repeat_op ) while stack_length > 1;
 }
 
+sub apply_function
+{
+    my $name = shift;
+    my $func = $funcs->{$name};
+
+    my @args;
+    push @args, pop_stack for (1 .. $func->{ARGS});
+
+    my @code = ( '(',
+		 @args,
+		 @{$func->{BLOCK}->{STACK}},
+		 ')' );
+
+    process_token( $_ ) foreach @code;
+}
+
 $ops = {
     '+'  => sub { do_op2( sub { $_[0] + $_[1] } ) }, # addition
     '-'  => sub { do_op2( sub { $_[0] - $_[1] } ) }, # subtraction
@@ -148,6 +164,16 @@ $ops = {
     'seq' => sub {                     # generate sequence
 	my $max = pop_stack;
 	push_stack $_ for 1 .. $max;
+    },
+
+    'defun' => sub {                   # define function (name, arg count, block)
+	my $name = pop_stack;
+	my $argcount = pop_stack;
+	my $block = pop_stack;
+	$funcs->{$name} = {
+	    'ARGS'  => $argcount,
+	    'BLOCK' => $block
+	};
     },
 };
 
@@ -193,6 +219,10 @@ sub process_token
     }
 
     if (stack_exec) {
+	if (exists $funcs->{$token}) {
+	    apply_function $token;
+	    return;
+	}
 	if (exists $ops->{$token}) {
 	    $ops->{$token}->();
 	    return;

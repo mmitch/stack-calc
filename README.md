@@ -56,11 +56,28 @@ the second-to-top value and so on)
 
  - `{ … }` creates a block.  In a block, operations are not evaluated
    during parsing - only groups are.  Subgroups will be evaluated
-   normally.  This will be used to create named functions, but this is
-   /not yet implemented/.
+   normally.  This is used to create the body of named functions.
 
 The implicit initial main stack is a normal stack (`( … )`): It is
 evaluated and its top value is returned.
+
+### named functions
+
+`defun` will define a function named *T1* (this is a rare instance
+where a token can (and should - don't redefine numbers to functions!)
+be a string) that expects *T2* arguments.  The function's code body is
+given via a block a *T3*.
+
+When later a token is encountered that is the name of a previously
+defined function, the following happens:
+
+ - as many arguments as defined are taken of the current stack
+ - a temporary stack is created
+ - the arguments are added to the temporary stack
+ - the function's code body is added to the temporary stack
+ - the temporary stack is evaluated
+ - the top element of the evaluated temporary stack is put onto the
+   current stack
 
 
 examples
@@ -72,8 +89,13 @@ examples
  - `( 9 seq !+ ) ( 15 seq !+ ) -` adds up all integers from 10 to 15
  - `15 seq 9 d !+` does the same.  Both variants are very inefficient
    for big numbers.
- - `6 seq !*` calculates !6
+ - `6 seq !*` calculates !6 (factorial)
  - `[ 10 20 30 ] 2 *` doubles every value in the list
+ - `{ seq !* } 1 fac defun [ 4 fac 6 fac ]` defines a factorial
+   function named `fac` that takes one argument.  Note that the
+   definition all by itself evaluates to nothing and leaves an empty
+   stack.  Two prevent a stack underflow on execution, a list
+   containing two invocations of `fac` has also been added.
 
 
 REPL
