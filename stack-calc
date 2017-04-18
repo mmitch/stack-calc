@@ -55,6 +55,19 @@ sub pop_stack
     return pop @{$current_stack->{STACK}};
 }
 
+sub peek_stack
+{
+    return @{$current_stack->{STACK}}[-1];
+}
+
+sub shift_stack
+{
+    my $count = shift;
+
+    die "stack exhausted\n" if stack_length() < $count;
+    shift @{$current_stack->{STACK}} for (1 .. $count);
+}
+
 sub push_stack_stack
 {
     push @stack_stack, $current_stack;
@@ -117,6 +130,21 @@ $ops = {
     '!*' => sub { do_repeat('*') },    # repeated multiplication
     '!/' => sub { do_repeat('/') },    # repeated division
     
+    'd' => sub {                       # drop from beginning of stack
+	my $count = pop_stack;
+	shift_stack $count;
+    },
+
+    'di' => sub {                      # drop indirectly
+	my $count = pop_stack;
+	my $peek = peek_stack;
+	die "di target is plain token" unless ref $peek eq 'HASH';
+	push_stack_stack;
+	$current_stack = $peek;
+	shift_stack $count;
+	pop_stack_stack;
+    },
+
     'seq' => sub {                     # generate sequence
 	my $max = pop_stack;
 	push_stack $_ for 1 .. $max;

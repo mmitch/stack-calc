@@ -36,6 +36,9 @@ the second-to-top value and so on)
  - `!+` (`!-`, `!*`, `!/`) will repeatedly execute `+` (`-`, `*`, `/`)
    unless there is only one value left in the current stack
 
+ - `d` will drop *T1* elements from the beginning of the current stack
+ - `di` will drop *T1* elements from the beginning of the group at *T2*
+
  - `seq` will generate an integer sequence from `1` to *T1*
 
 ### groups
