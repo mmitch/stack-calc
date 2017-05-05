@@ -72,7 +72,7 @@ given via a block a *T3*.
 When later a token is encountered that is the name of a previously
 defined function, the following happens:
 
- - as many arguments as defined are taken of the current stack
+ - as many arguments as defined are taken off the current stack
  - a temporary stack is created
  - the arguments are added to the temporary stack
  - the function's code body is added to the temporary stack
