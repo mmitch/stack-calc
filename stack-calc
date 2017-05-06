@@ -79,6 +79,11 @@ sub pop_stack_stack
     $current_stack = pop @stack_stack;
 }
 
+sub init_functions
+{
+    $funcs = {};
+}
+
 sub inner_seq
 {
     my $arg = shift;
@@ -276,6 +281,7 @@ sub execute
     my $tokens = shift;
 
     init_stacks;
+    init_functions;
     process_token $_ foreach split /\s+/, $tokens;
     return for_print pop_stack;
 }
